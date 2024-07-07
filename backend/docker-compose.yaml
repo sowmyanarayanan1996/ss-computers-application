@@ -1,0 +1,41 @@
+version: '3.9'
+
+volumes:
+  postgresv:
+  conf_tmp:
+  dataset_tmp:
+  ingestv_tmp:
+
+services:
+  postgresdb:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - 5432:5432
+    networks:
+      - model_onboard_net
+    volumes:
+      - postgresv:/var/lib/postgresql/data
+
+  rt-core-api-service:
+    container_name: rt_core_service
+    image: rt-core-service
+    build:
+      context: ./services
+      dockerfile: Dockerfile
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 8061
+    ports:
+      - 8061:8061
+    networks:
+      - model_onboard_net
+    volumes:
+      - ingestv_tmp:/tmp
+    depends_on:
+      - postgresdb
+    restart: always
+
+networks:
+  model_onboard_net:
