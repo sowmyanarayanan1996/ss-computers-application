@@ -19,10 +19,11 @@ services:
       - model_onboard_net
     volumes:
       - postgresv:/var/lib/postgresql/data
+    
 
-  rt-core-api-service:
-    container_name: rt_core_service
-    image: rt-core-service
+  ss-computers-api-service:
+    container_name: ss_computers_service
+    image: ss-comp-service
     build:
       context: ./services
       dockerfile: Dockerfile
